@@ -38,7 +38,8 @@ void initialize()
 
 void handlingGameEvents()
 {
-    for (auto& ob : fly_objects_) {
+    for (auto& ob : fly_objects_)
+    {
         if (ob->getIsAlive())
             player.findCollision(ob.get());
     }
@@ -73,11 +74,11 @@ void act(float dt)
     {
         std::random_device rd;
         std::mt19937 g(rd());
-        std::uniform_int_distribution<std::mt19937::result_type> d(0, 5);
+        std::uniform_int_distribution<std::mt19937::result_type> d(0, 8);
 
-        if (d(g) == 0)
+        if (d(g) == 0 || d(g) == 1)
             fly_objects_.emplace_back(std::make_unique<Enemy>());
-        else if (d(g) == 1)
+        else if (d(g) == 2)
             fly_objects_.emplace_back(std::make_unique<SuperFood>());
         else
             fly_objects_.emplace_back(std::make_unique<RegularFood>());
@@ -114,13 +115,9 @@ void draw()
     drawDigit(player.getScore());
     drawLives(player.getNumOfLives());
 
-    if (!player.getAliveness()) {
+    if (!player.getAliveness())
         drawEndOfGame();
-    }
 }
 
 // free game data in this function
-void finalize()
-{
-
-}
+void finalize() {}

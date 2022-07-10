@@ -5,6 +5,11 @@
 #include "Engine.h"
 #include "Player.h"
 
+enum CollisionFlag {
+    FOOD,
+    ENEMY,
+    NONE
+};
 
 class FlyObject : public Objects {
 public:
@@ -17,13 +22,13 @@ public:
     bool getIsCrashing();
     virtual unsigned int getReward() = 0;
 
-    virtual char isCollide(Objects* that) = 0;
+    virtual CollisionFlag isCollide(Objects* that) = 0;
 
 protected:
     FlyObject(uint32_t color, unsigned int reward, unsigned int speed);
 
     void moveLiving(float dt);
-    void moveDying(float dt);
+    void moveDying();
     void checkIsOnField();
     static double findSinPhi(float y);
 
@@ -35,11 +40,10 @@ protected:
 
 class Food : public FlyObject {
 public:
-//    Food(unsigned int reward);
     virtual ~Food() = default;
 
     void draw() override;
-    char isCollide(Objects* that) override;
+    CollisionFlag isCollide(Objects* that) override;
     unsigned int getReward() override;
 
 protected:
@@ -58,15 +62,12 @@ public:
     virtual ~SuperFood() = default;
 };
 
-
-
-
 class Enemy : public FlyObject {
 public:
     Enemy();
     virtual ~Enemy() = default;
 
     void draw() override;
-    char isCollide(Objects* that) override;
+    CollisionFlag isCollide(Objects* that) override;
     unsigned int getReward() override { return 0; };
 };

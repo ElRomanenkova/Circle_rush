@@ -26,7 +26,7 @@ public:
 
 private:
     void moveLiving(float dt);
-    void moveDying(float dt);
+    void moveDying();
 };
 
 class FlyObject;

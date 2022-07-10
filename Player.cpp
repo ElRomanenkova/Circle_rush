@@ -6,7 +6,7 @@
 ////////////////////    Player    ////////////////////
 
 Player::Player() : left(true), right(false), isClockwise_{true}, isAlive_{true},
-                    score_{0}, lives_{NUMBER_OF_LIVES}, speed_{3} {}
+                   score_{0}, lives_{NUMBER_OF_LIVES}, speed_{3} {}
 
 bool Player::getAliveness()  { return isAlive_; }
 
@@ -54,15 +54,16 @@ void Player::findCollision(FlyObject* object)
 {
     if (left.getAliveness() && right.getAliveness())
     {
-        char l = object->isCollide(&left);
-        char r = object->isCollide(&right);
+        CollisionFlag l = object->isCollide(&left);
+        CollisionFlag r = object->isCollide(&right);
 
-        if ((l == 'f') || (r == 'f'))
+        if ((l == CollisionFlag::FOOD) || (r == CollisionFlag::FOOD))
             score_ += object->getReward();
-        else if ((l == 'e') || (r == 'e'))
+        else if ((l == CollisionFlag::ENEMY) || (r == CollisionFlag::ENEMY))
         {
             lives_--;
-            if (lives_ == 0) {
+            if (lives_ == 0)
+            {
                 left.startCrashing();
                 right.startCrashing();
             }
@@ -109,7 +110,7 @@ void PlayerCircle::move(float dt)
     if (isAlive_)
         moveLiving(dt);
     else if (isCrashing_)
-        moveDying(dt);
+        moveDying();
 }
 
 void PlayerCircle::moveLiving(float dt)
@@ -127,9 +128,10 @@ void PlayerCircle::moveLiving(float dt)
     y_ = yy;
 }
 
-void PlayerCircle::moveDying(float dt)
+void PlayerCircle::moveDying()
 {
-    if (increase_) {
+    if (increase_)
+    {
         if (rad_ < CIRCLE_RAD + 20)
             rad_++;
         else
@@ -138,7 +140,8 @@ void PlayerCircle::moveDying(float dt)
     else
     if (rad_ > 0)
         rad_--;
-    else {
+    else
+    {
         isCrashing_ = false;
     }
 }

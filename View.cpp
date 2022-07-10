@@ -16,7 +16,7 @@ void drawCircle(int x, int y, int r, uint32_t color)
     int rr = r * r;
     for (int i = x - r; i <= x + r; ++i)
     {
-        int root = sqrt(rr - (i - x) * (i - x));
+        int root = static_cast<int>(sqrt(rr - (i - x) * (i - x)));
         int j_min = y - root;
         int j_max = y + root;
         for (int j = j_min; j <= j_max; ++j)
@@ -44,7 +44,8 @@ void drawCross(int x, int y, int half_a, uint32_t color)
     int max_j = y + half_a;
     for (int i = x - half_a; i < x + half_a; ++i)
     {
-        for (int s = 0; s < 15; ++s) {
+        for (int s = 0; s < 15; ++s)
+        {
             if ((i + s < x + half_a) && (min_j < y + half_a))
                 drawPoint(i + s, min_j, color);
             if ((i + s < x + half_a) && (max_j < y + half_a))
@@ -60,18 +61,12 @@ void drawCross(int x, int y, int half_a, uint32_t color)
 }
 
 
-
-
-
 void drawBack()
 {
     for (int i = 0; i < SCREEN_WIDTH; ++i)
         for(int j = 0; j < SCREEN_HEIGHT; ++j)
             buffer[j][i] = Color::SKYBLUE;
 }
-
-
-
 
 
 bool first = false;
@@ -100,9 +95,6 @@ void moveEnding(float dt)
     if (counter >= 2)
         third = true;
 }
-
-
-
 
 
 void parse(int n, std::vector<unsigned int>& vec)
