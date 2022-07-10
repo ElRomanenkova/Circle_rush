@@ -6,18 +6,18 @@
 ////////////////////    Player    ////////////////////
 
 Player::Player() : left(true), right(false), isClockwise_{true}, isAlive_{true},
-                    score{0}, lives{NUMBER_OF_LIVES}, speed_{3} {}
+                    score_{0}, lives_{NUMBER_OF_LIVES}, speed_{3} {}
 
 bool Player::getAliveness()  { return isAlive_; }
 
-int Player::getScore()  { return score; }
+unsigned int Player::getScore()  { return score_; }
 
-int Player::getNumOfLives()  { return lives; }
+unsigned int Player::getNumOfLives()  { return lives_; }
 
 void Player::move(float dt)
 {
     float phi;
-    int speed = speed_ + score / 10;
+    int speed = speed_ + score_ / 10;
     if (isClockwise_)
         phi = abs(speed * dt);
     else
@@ -29,7 +29,7 @@ void Player::move(float dt)
     left.checkCoord();
     right.checkCoord();
 
-    if (!(left.getAliveness() || right.getAliveness()))
+    if (!(left.getAliveness() || left.getIsCrashing() || right.getAliveness() || right.getIsCrashing()))
     {
         isAlive_ = false;
         left.makeInvisible();
@@ -52,17 +52,20 @@ void Player::changeRotation()
 
 void Player::findCollision(FlyObject* object)
 {
-    char l = object->isCollide(&left);
-    char r = object->isCollide(&right);
-
-    if ((l == 'f') || (r == 'f'))
-        score++;
-    else if ((l == 'e') || (r == 'e'))
+    if (left.getAliveness() && right.getAliveness())
     {
-        lives--;
-        if (lives == 0) {
-            left.startCrashing();
-            right.startCrashing();
+        char l = object->isCollide(&left);
+        char r = object->isCollide(&right);
+
+        if ((l == 'f') || (r == 'f'))
+            score_ += object->getReward();
+        else if ((l == 'e') || (r == 'e'))
+        {
+            lives_--;
+            if (lives_ == 0) {
+                left.startCrashing();
+                right.startCrashing();
+            }
         }
     }
 }
@@ -80,10 +83,9 @@ PlayerCircle::PlayerCircle(bool isSideLeft) : Objects(CIRCLE_RAD, Color::WHITE)
     y_ = (SCREEN_HEIGHT / 2);
 }
 
-bool PlayerCircle::getAliveness()
-{
-    return (isAlive_ || isCrashing_);
-}
+bool PlayerCircle::getAliveness()  { return isAlive_; }
+
+bool PlayerCircle::getIsCrashing() { return isCrashing_; }
 
 void PlayerCircle::startCrashing()
 {
@@ -93,8 +95,8 @@ void PlayerCircle::startCrashing()
 
 void PlayerCircle::makeInvisible()
 {
-    x_ = -10;
-    y_ = -10;
+    x_ = - 3 * CIRCLE_RAD;
+    y_ = - 3 * CIRCLE_RAD;
 }
 
 void PlayerCircle::draw()

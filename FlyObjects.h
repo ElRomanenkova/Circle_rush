@@ -15,11 +15,12 @@ public:
     void move(float dt) override;
     bool getIsAlive();
     bool getIsCrashing();
+    virtual unsigned int getReward() = 0;
 
     virtual char isCollide(Objects* that) = 0;
 
 protected:
-    FlyObject(uint32_t color);
+    FlyObject(uint32_t color, unsigned int reward, unsigned int speed);
 
     void moveLiving(float dt);
     void moveDying(float dt);
@@ -27,17 +28,37 @@ protected:
     static double findSinPhi(float y);
 
     double sin_phi_;
+    unsigned int reward_;
+    unsigned int speed_;
 };
 
 
 class Food : public FlyObject {
 public:
-    Food();
+//    Food(unsigned int reward);
     virtual ~Food() = default;
 
     void draw() override;
     char isCollide(Objects* that) override;
+    unsigned int getReward() override;
+
+protected:
+    Food(uint32_t color, unsigned int reward, unsigned int speed);
 };
+
+class RegularFood : public Food {
+public:
+    RegularFood();
+    virtual ~RegularFood() = default;
+};
+
+class SuperFood : public Food {
+public:
+    SuperFood();
+    virtual ~SuperFood() = default;
+};
+
+
 
 
 class Enemy : public FlyObject {
@@ -47,4 +68,5 @@ public:
 
     void draw() override;
     char isCollide(Objects* that) override;
+    unsigned int getReward() override { return 0; };
 };

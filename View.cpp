@@ -51,7 +51,7 @@ void drawCross(int x, int y, int half_a, uint32_t color)
                 drawPoint(i + s, max_j, color);
             if ((i < x + half_a) && (min_j + s < y + half_a))
                 drawPoint(i, min_j + s, color);
-            if ((i < x + half_a) && (max_j - s < y + half_a))
+            if ((i < x + half_a) && (max_j - s > y - half_a))
                 drawPoint(i, max_j - s, color);
         }
         min_j++;
@@ -105,14 +105,15 @@ void moveEnding(float dt)
 
 
 
-void parse(int n, std::vector<int>& vec) {
+void parse(int n, std::vector<unsigned int>& vec)
+{
     vec.push_back(n % 10);
-    int temp = static_cast<int>(n / 10);
+    unsigned int temp = static_cast<unsigned int>(n / 10);
     if (temp == 0 ) return;
     parse(temp, vec);
 }
 
-std::vector<int> makeVectorFromNum(int num)
+std::vector<unsigned int> makeVectorFromNum(unsigned int num)
 {
     if      (num == 0) return {1, 1, 1, 1, 1, 1, 0};
     else if (num == 1) return {0, 1, 1, 0, 0, 0, 0};
@@ -127,7 +128,7 @@ std::vector<int> makeVectorFromNum(int num)
     else return {};
 }
 
-void drawNumByIndicator(int x, int y, std::vector<int> num)
+void drawNumByIndicator(int x, int y, std::vector<unsigned int> num)
 {
     uint32_t color = Color::MAROON;
 
@@ -140,9 +141,9 @@ void drawNumByIndicator(int x, int y, std::vector<int> num)
     if (num[6] == 1) drawRectangle(x + SIZE_OF_CUBE, y + 5 * SIZE_OF_CUBE, 4 * SIZE_OF_CUBE, SIZE_OF_CUBE, color);
 }
 
-void drawDigit(int score)
+void drawDigit(unsigned int score)
 {
-    std::vector<int> nums_of_score;
+    std::vector<unsigned int> nums_of_score;
     parse(score, nums_of_score);
     int y = 35;
     int x = SCREEN_WIDTH - 70;
@@ -154,7 +155,7 @@ void drawDigit(int score)
     }
 }
 
-void drawLives(int lives)
+void drawLives(unsigned int lives)
 {
     int x = 50;
     int y = 50;

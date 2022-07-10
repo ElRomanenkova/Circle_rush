@@ -3,20 +3,15 @@
 #include <random>
 #include <iostream>
 
-FlyObject::FlyObject(uint32_t color) : Objects(FLY_OBJECT_RAD, std::rand() % SCREEN_HEIGHT, FLY_OBJECT_RAD, color)
+FlyObject::FlyObject(uint32_t color, unsigned int reward, unsigned int speed) : Objects(0, std::rand() % SCREEN_HEIGHT, FLY_OBJECT_RAD, color),
+                                                                                speed_{speed}, reward_{reward}
 {
     sin_phi_ = FlyObject::findSinPhi(y_);
 }
 
-bool FlyObject::getIsAlive()
-{
-    return isAlive_;
-}
+bool FlyObject::getIsAlive() { return isAlive_; }
 
-bool FlyObject::getIsCrashing()
-{
-    return isCrashing_;
-}
+bool FlyObject::getIsCrashing() { return isCrashing_; }
 
 void FlyObject::checkIsOnField()
 {
@@ -25,8 +20,6 @@ void FlyObject::checkIsOnField()
 
 double FlyObject::findSinPhi(float y)
 {
-//    y = 348;
-
     double dist = fabs(SCREEN_HEIGHT / 2 - y);
 //    std::cout << dist << std::endl;
     double hypot = sqrt(static_cast<double>((SCREEN_WIDTH / 2) * (SCREEN_WIDTH / 2)) + dist * dist);
@@ -65,7 +58,7 @@ void FlyObject::move(float dt)
 
 void FlyObject::moveLiving(float dt)
 {
-    float ch = 3;
+    float ch = 200 * dt * speed_;
 
     float step = ch * sqrt(1 / (sin_phi_ * sin_phi_) - 1);
 
@@ -95,7 +88,11 @@ void FlyObject::moveDying(float dt)
 ////////////////////    Food & Enemy    ////////////////////
 
 
-Food::Food() : FlyObject(Color::WHITE) {}
+//Food::Food() : FlyObject(Color::WHITE) {}
+
+Food::Food(uint32_t color, unsigned int reward, unsigned int speed) : FlyObject(color, reward, speed) {}
+
+unsigned int Food::getReward() { return reward_; }
 
 void Food::draw()
 {
@@ -114,7 +111,13 @@ char Food::isCollide(Objects* that)
     return ' ';
 }
 
-Enemy::Enemy() : FlyObject(Color::BLACK) {}
+RegularFood::RegularFood() : Food(Color::WHITE, 1, 1) {}
+
+SuperFood::SuperFood()  : Food(Color::GOLD, 2, 2) {}
+
+
+
+Enemy::Enemy() : FlyObject(Color::BLACK, 0, 1) {}
 
 void Enemy::draw()
 {

@@ -4,7 +4,6 @@
 #include <memory>
 
 #include "FlyObjects.h"
-//#include "Objects.h"
 #include "View.h"
 #include "Engine.h"
 
@@ -19,6 +18,7 @@ public:
     void checkCoord();
     void startCrashing();
     bool getAliveness();
+    bool getIsCrashing();
     void makeInvisible();
 
     void draw() override;
@@ -34,7 +34,7 @@ class FlyObject;
 class Player {
 public:
     static const int PLAYER_RAD = 140;
-    static const int NUMBER_OF_LIVES = 1;
+    static const int NUMBER_OF_LIVES = 3;
 
     Player();
 
@@ -46,14 +46,14 @@ public:
     void findCollision(FlyObject* object);
 
     bool getAliveness();
-    int getScore();
-    int getNumOfLives();
+    unsigned int getScore();
+    unsigned int getNumOfLives();
 
 private:
-    int lives;
-    int score;
+    unsigned int lives_;
+    unsigned int score_;
 
-    int speed_;
+    unsigned int speed_;
 
     bool isClockwise_;
     bool isAlive_;

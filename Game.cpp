@@ -6,6 +6,7 @@
 #include <ctime>
 #include <iostream>
 #include <algorithm>
+#include <random>
 
 #include "Player.h"
 #include "FlyObjects.h"
@@ -24,16 +25,15 @@
 #define OBJECTS_NEWBORN 2
 
 Player player;
-//std::vector<std::unique_ptr<Object>> fly_objects_;
-std::vector<std::shared_ptr<FlyObject>> fly_objects_;
+std::vector<std::unique_ptr<FlyObject>> fly_objects_;
 float objects_timer = OBJECTS_NEWBORN - 1;
-float rotation_timer = 0;
+bool wasSpacePressed = false;
 
 
 // initialize game data in this function
 void initialize()
 {
-    srand (static_cast <unsigned> (time(0)));
+    srand(static_cast<unsigned>(time(0)));
 }
 
 void handlingGameEvents()
@@ -43,7 +43,7 @@ void handlingGameEvents()
             player.findCollision(ob.get());
     }
 
-    auto newEnd = std::remove_if(fly_objects_.begin(), fly_objects_.end(), [](std::shared_ptr<FlyObject> ob) {
+    auto newEnd = std::remove_if(fly_objects_.begin(), fly_objects_.end(), [](std::unique_ptr<FlyObject>& ob) {
         return !(ob->getIsAlive() || ob->getIsCrashing());
     });
     fly_objects_.erase(newEnd, fly_objects_.end());
@@ -57,33 +57,30 @@ void act(float dt)
     if (is_key_pressed(VK_ESCAPE))
         schedule_quit_game();
 
+    if (!is_key_pressed(VK_SPACE))
+        wasSpacePressed = false;
+
     if (is_key_pressed(VK_SPACE))
     {
-        rotation_timer += dt;
-
-        if (rotation_timer >= 7 * dt) {
+        if (!wasSpacePressed)
             player.changeRotation();
-            rotation_timer = 0;
-        }
+        wasSpacePressed = true;
     }
 
     objects_timer += dt;
 
-    if (objects_timer >= OBJECTS_NEWBORN) {
-        float r = std::rand() % 3;
-        std::shared_ptr <FlyObject> ob;
-        if (r == 0) {
-            auto enemy = std::make_shared<Enemy>();
-            ob = std::static_pointer_cast<FlyObject>(enemy);
-        } else {
-            auto food = std::make_shared<Food>();
-            ob = std::static_pointer_cast<FlyObject>(food);
-        }
-        fly_objects_.push_back(ob);
-//    if (r == 0)
-//            objects_.push_back(std::make_unique<Enemy>());
-//        else
-//            objects_.push_back(std::make_unique<Food>());
+    if (objects_timer >= OBJECTS_NEWBORN)
+    {
+        std::random_device rd;
+        std::mt19937 g(rd());
+        std::uniform_int_distribution<std::mt19937::result_type> d(0, 5);
+
+        if (d(g) == 0)
+            fly_objects_.emplace_back(std::make_unique<Enemy>());
+        else if (d(g) == 1)
+            fly_objects_.emplace_back(std::make_unique<SuperFood>());
+        else
+            fly_objects_.emplace_back(std::make_unique<RegularFood>());
 
         objects_timer = 0;
     }

@@ -8,7 +8,10 @@ enum Color {
     BLACK   = 0x000000,
     MAROON  = 0x800000,
     VIOLET  = 0x8080ff,
-    SKYBLUE = 0x87CEEB
+    SKYBLUE = 0x87CEEB,
+    MEDBLUE = 0x7B68EE,
+    SANDYBROWN = 0xF4A460,
+    GOLD = 0xFFD700
 };
 
 
@@ -20,10 +23,10 @@ void drawCross(int x, int y, int half_a, uint32_t color);
 
 void drawBack();
 
-void drawLives(int lives);
+void drawLives(unsigned int lives);
 
-void drawNumByIndicator(int x, int y, std::vector<int>& num);
-void drawDigit(int score);
+void drawNumByIndicator(int x, int y, std::vector<unsigned int>& num);
+void drawDigit(unsigned int score);
 
 void moveEnding(float dt);
 void drawEndOfGame();
